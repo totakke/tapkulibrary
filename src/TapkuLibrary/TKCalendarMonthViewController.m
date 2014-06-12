@@ -36,6 +36,7 @@
 #import "NSDate+CalendarGrid.h"
 #import "TKGradientView.h"
 #import "UIColor+TKCategory.h"
+#import "UIImage+Additions.h"
 #import "UIImageView+TKCategory.h"
 #import "UIView+TKCategory.h"
 
@@ -80,7 +81,8 @@ static UIImage *tileImage;
 
 + (void) initialize{
     if (self == [TKCalendarMonthTiles class]){
-        tileImage = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Date Tile.png")];
+        //tileImage = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Date Tile.png")];
+        tileImage = [UIImage imageWithColor:[UIColor colorWithHex:0xf0f0f0]];
     }
 }
 
@@ -259,7 +261,7 @@ static UIImage *tileImage;
 	}
 	
 	
-	self.frame = CGRectMake(0, 1.0, VIEW_WIDTH, h+1);
+	self.frame = CGRectMake(0, 0, VIEW_WIDTH, h);
 	
 	[self.selectedImageView addSubview:self.currentDay];
 	[self.selectedImageView addSubview:self.dot];
@@ -279,14 +281,14 @@ static UIImage *tileImage;
 	NSInteger row = index / 7;
 	NSInteger col = index % 7;
 	
-	return CGRectMake(col*46-1, row*44+6, 46, 44);
+	return CGRectMake(col*46, row*44+6, 46, 44);
 }
 - (void) drawTileInRect:(CGRect)r day:(NSInteger)day mark:(BOOL)mark font:(UIFont*)f1 font2:(UIFont*)f2 context:(CGContextRef)context{
     
     NSString *str = [numberFormatter stringFromNumber:@(day)];
-	r.size.height -= 2;
+	//r.size.height -= 2;
 	
-	CGContextSetPatternPhase(context, CGSizeMake(r.origin.x, r.origin.y - 2));
+	//CGContextSetPatternPhase(context, CGSizeMake(r.origin.x, r.origin.y - 2));
     
 	
 	[str drawInRect: r
@@ -311,7 +313,7 @@ static UIImage *tileImage;
 	
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	UIImage *tile = tileImage;
-	CGRect r = CGRectMake(-1, 0, 46, 44);
+	CGRect r = CGRectMake(0, 0, 46, 44);
 	
 	CGContextSetInterpolationQuality(context, kCGInterpolationNone);
 	CGContextDrawTiledImage(context, r, tile.CGImage);
@@ -321,7 +323,9 @@ static UIImage *tileImage;
 		NSInteger index = today +  pre-1;
 		CGRect r = [self rectForCellAtIndex:index];
 		r.origin.y -= 6;
-		[[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Tile.png")] drawInRect:r];
+        //[[UIImage imageWithColor:[UIColor colorWithHex:0xaaaaaa]] drawInRect:r];
+        [[UIImage imageWithColor:[UIColor colorWithHex:0xaaaaaa] size:r.size andRoundSize:20.0] drawInRect:r];
+		//[[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Tile.png")] drawInRect:r];
 	}
 	
 	
@@ -365,9 +369,9 @@ static UIImage *tileImage;
 		
 		r = [self rectForCellAtIndex:index];
 		if(today == i){
-			CGContextSetShadowWithColor(context, CGSizeMake(0,-1), 0, darkColor);
-			[[UIColor whiteColor] set];
-			r.origin.y += 1;
+			//CGContextSetShadowWithColor(context, CGSizeMake(0,-1), 0, darkColor);
+			//[[UIColor whiteColor] set];
+			//r.origin.y += 1;
 		}
 		
 		BOOL mark = mc > 0 && index < mc ? [self.marks[index] boolValue] : NO;
@@ -412,14 +416,15 @@ static UIImage *tileImage;
 	BOOL hasDot = NO;
 	
 	if(day == today){
-		self.currentDay.shadowOffset = CGSizeMake(0, -1);
-		self.dot.shadowOffset = CGSizeMake(0, -1);
-		self.selectedImageView.image = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Selected Tile.png")];
+		//self.currentDay.shadowOffset = CGSizeMake(0, -1);
+		//self.dot.shadowOffset = CGSizeMake(0, -1);
+		self.selectedImageView.image = [UIImage imageWithColor:[UIColor colorWithRed:156.0/255.0 green:167.0/255.0 blue:226.0/255.0 alpha:1]];
+        //self.selectedImageView.image = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Selected Tile.png")];
 		markWasOnToday = YES;
 		
 	}else if(markWasOnToday){
-		self.dot.shadowOffset = CGSizeMake(0, -1);
-		self.currentDay.shadowOffset = CGSizeMake(0, -1);
+		//self.dot.shadowOffset = CGSizeMake(0, -1);
+		//self.currentDay.shadowOffset = CGSizeMake(0, -1);
 		NSString *path = TKBUNDLE(@"calendar/Month Calendar Date Tile Selected.png");
         self.selectedImageView.image = [UIImage imageWithColor:[UIColor colorWithRed:156.0/255.0 green:167.0/255.0 blue:226.0/255.0 alpha:1]];
         
@@ -518,13 +523,10 @@ static UIImage *tileImage;
 		self.dot.hidden = YES;
 		
 	}else if(portion==1 && day == today){
-		self.currentDay.shadowOffset = CGSizeMake(0, -1);
-		self.dot.shadowOffset = CGSizeMake(0, -1);
-		self.selectedImageView.image = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Selected Tile.png")];
+        self.selectedImageView.image = [UIImage imageWithColor:[UIColor colorWithRed:156.0/255.0 green:167.0/255.0 blue:226.0/255.0 alpha:1]];
+		//self.selectedImageView.image = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Selected Tile.png")];
 		markWasOnToday = YES;
 	}else if(markWasOnToday){
-		self.dot.shadowOffset = CGSizeMake(0, -1);
-		self.currentDay.shadowOffset = CGSizeMake(0, -1);
 		NSString *path = TKBUNDLE(@"calendar/Month Calendar Date Tile Selected.png");
         self.selectedImageView.image = [UIImage imageWithColor:[UIColor colorWithRed:156.0/255.0 green:167.0/255.0 blue:226.0/255.0 alpha:1]];
 		//self.selectedImageView.image = [[UIImage imageWithContentsOfFile:path] stretchableImageWithLeftCapWidth:1 topCapHeight:0];
@@ -588,8 +590,8 @@ static UIImage *tileImage;
 	_currentDay.backgroundColor = [UIColor clearColor];
 	_currentDay.font = [UIFont boldSystemFontOfSize:DATE_FONT_SIZE];
 	_currentDay.textAlignment = NSTextAlignmentCenter;
-	_currentDay.shadowColor = [UIColor darkGrayColor];
-	_currentDay.shadowOffset = CGSizeMake(0, -1);
+	//_currentDay.shadowColor = [UIColor darkGrayColor];
+	//_currentDay.shadowOffset = CGSizeMake(0, -1);
 	return _currentDay;
 }
 - (UILabel *) dot{
@@ -604,8 +606,8 @@ static UIImage *tileImage;
 	_dot.backgroundColor = [UIColor clearColor];
 	_dot.font = [UIFont boldSystemFontOfSize:DOT_FONT_SIZE];
 	_dot.textAlignment = NSTextAlignmentCenter;
-	_dot.shadowColor = [UIColor darkGrayColor];
-	_dot.shadowOffset = CGSizeMake(0, -1);
+	//_dot.shadowColor = [UIColor darkGrayColor];
+	//_dot.shadowOffset = CGSizeMake(0, -1);
 	return _dot;
 }
 - (UIImageView *) selectedImageView{
@@ -648,14 +650,17 @@ static UIImage *tileImage;
 
 + (void) initialize{
     if (self == [TKCalendarMonthView class]){
-		gradientColor = [UIColor colorWithPatternImage:[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/color_gradient.png")]];
-		grayGradientColor = [UIColor colorWithPatternImage:[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/color_gradient_gray.png")]];
-		numberFormatter = [[NSNumberFormatter alloc] init];
+		//gradientColor = [UIColor colorWithPatternImage:[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/color_gradient.png")]];
+        gradientColor = [UIColor blackColor];
+		//grayGradientColor = [UIColor colorWithPatternImage:[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/color_gradient_gray.png")]];
+        grayGradientColor = [UIColor lightGrayColor];
+        
+        numberFormatter = [[NSNumberFormatter alloc] init];
     }
 }
 - (id) initWithSundayAsFirst:(BOOL)s timeZone:(NSTimeZone*)timeZone{
 	if (!(self = [super initWithFrame:CGRectMake(0, 0, VIEW_WIDTH, VIEW_WIDTH)])) return nil;
-	self.backgroundColor = [UIColor colorWithHex:0xaaaeb6];
+	self.backgroundColor = [UIColor colorWithHex:0xeeeeee];
 	self.timeZone = timeZone;
 	self.sunday = s;
 	
@@ -727,8 +732,8 @@ static UIImage *tileImage;
         
 		label.text = s;
 		label.textAlignment = NSTextAlignmentCenter;
-		label.shadowColor = [UIColor whiteColor];
-		label.shadowOffset = CGSizeMake(0, 1);
+		//label.shadowColor = [UIColor whiteColor];
+		//label.shadowOffset = CGSizeMake(0, 1);
 		label.font = [UIFont boldSystemFontOfSize:10];
 		label.backgroundColor = [UIColor clearColor];
 		label.textColor = TEXT_COLOR;
@@ -783,7 +788,7 @@ static UIImage *tileImage;
 	return CGRectMake(0, self.tileBox.bounds.size.height + self.tileBox.frame.origin.y, self.bounds.size.width, 6);
 }
 - (void) _updateSubviewFramesWithTile:(UIView*)tile{
-	self.tileBox.frame = CGRectMake(0, TOP_BAR_HEIGHT-1,VIEW_WIDTH, tile.frame.size.height);
+	self.tileBox.frame = CGRectMake(0, TOP_BAR_HEIGHT,VIEW_WIDTH, tile.frame.size.height);
 	self.frame = CGRectMakeWithPoint(self.frame.origin, VIEW_WIDTH, self.tileBox.frame.size.height+self.tileBox.frame.origin.y);
 	self.shadow.frame = self.tileBox.frame;
 	self.dropshadow.frame = [self _calculatedDropShadowFrame];
@@ -910,7 +915,7 @@ static UIImage *tileImage;
 	
 	
 	if(isNext){
-		self.currentTile.frame = CGRectMakeWithSize(0, -1 * self.currentTile.bounds.size.height + overlap + 2,  self.currentTile.frame.size);
+		self.currentTile.frame = CGRectMakeWithSize(0, -1 * self.currentTile.bounds.size.height + overlap ,  self.currentTile.frame.size);
 		newTile.frame = CGRectMake(0, 1, newTile.frame.size.width, newTile.frame.size.height);
 	}else{
 		newTile.frame = CGRectMake(0, 1, newTile.frame.size.width, newTile.frame.size.height);
@@ -938,20 +943,20 @@ static UIImage *tileImage;
 - (UIView *) topBackground{
 	if(_topBackground) return _topBackground;
 	
-	TKGradientView *gradient = [[TKGradientView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, TOP_BAR_HEIGHT)];
+	//TKGradientView *gradient = [[TKGradientView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, TOP_BAR_HEIGHT)];
 	//gradient.colors = @[[UIColor colorWithHex:0xf4f4f5],[UIColor colorWithHex:0xccccd1]];
-    gradient.colors = @[[UIColor lightGrayColor],[UIColor lightGrayColor]];
+    //gradient.colors = @[[UIColor lightGrayColor],[UIColor lightGrayColor]];
     
     
-	gradient.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 44, gradient.bounds.size.width, 1)];
-    line.backgroundColor = [UIColor lightGrayColor];
+	//gradient.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	//UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 44, gradient.bounds.size.width, 1)];
+    //line.backgroundColor = [UIColor lightGrayColor];
 	//line.backgroundColor = [UIColor colorWithHex:0xaaaeb6];
-	line.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	[gradient addSubview:line];
-	
-	gradient.userInteractionEnabled = YES;
-	_topBackground = gradient;
+	//line.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	//[gradient addSubview:line];
+	_topBackground.backgroundColor = [UIColor whiteColor];
+	//gradient.userInteractionEnabled = YES;
+	//_topBackground = gradient;
 	return _topBackground;
 }
 - (UILabel *) monthYear{
@@ -961,9 +966,9 @@ static UIImage *tileImage;
 	_monthYear.textAlignment = NSTextAlignmentCenter;
 	_monthYear.backgroundColor = [UIColor clearColor];
 	_monthYear.font = [UIFont boldSystemFontOfSize:22];
-	_monthYear.shadowColor = [UIColor whiteColor];
-	_monthYear.shadowOffset = CGSizeMake(0,1);
-	_monthYear.textColor = gradientColor;
+	//_monthYear.shadowColor = [UIColor whiteColor];
+	//_monthYear.shadowOffset = CGSizeMake(0,1);
+	_monthYear.textColor =[UIColor blackColor];
 	return _monthYear;
 }
 - (UIButton *) leftArrow{
@@ -1000,20 +1005,20 @@ static UIImage *tileImage;
 - (UIView *) shadow{
 	if(_shadow) return _shadow;
 	
-	TKGradientView *grad  = [[TKGradientView alloc] initWithFrame:CGRectMake(0, 0, 100, self.frame.size.width)];
-	grad.colors = @[[UIColor colorWithWhite:0 alpha:0],[UIColor colorWithWhite:0 alpha:0.0],[UIColor colorWithWhite:0 alpha:0.1]];
-	_shadow = grad;
-	_shadow.userInteractionEnabled = NO;
+	//TKGradientView *grad  = [[TKGradientView alloc] initWithFrame:CGRectMake(0, 0, 100, self.frame.size.width)];
+	//grad.colors = @[[UIColor colorWithWhite:0 alpha:0],[UIColor colorWithWhite:0 alpha:0.0],[UIColor colorWithWhite:0 alpha:0.1]];
+	//_shadow = grad;
+	//_shadow.userInteractionEnabled = NO;
 	return _shadow;
 }
 - (UIView *) dropshadow{
 	if(_dropshadow) return _dropshadow;
 	
-	TKGradientView *grad  = [[TKGradientView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 10)];
-	grad.backgroundColor = [UIColor clearColor];
-	grad.colors = @[[UIColor colorWithWhite:0 alpha:0.3],[UIColor colorWithWhite:0 alpha:0.0]];
-	_dropshadow = grad;
-	_dropshadow.userInteractionEnabled = NO;
+	//TKGradientView *grad  = [[TKGradientView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 10)];
+	//grad.backgroundColor = [UIColor clearColor];
+	//grad.colors = @[[UIColor colorWithWhite:0 alpha:0.3],[UIColor colorWithWhite:0 alpha:0.0]];
+	//_dropshadow = grad;
+	//_dropshadow.userInteractionEnabled = NO;
 	return _dropshadow;
 }
 
