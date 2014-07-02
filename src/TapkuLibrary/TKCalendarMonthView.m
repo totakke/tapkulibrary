@@ -48,11 +48,13 @@ static UIImage *tileImage;
 #define TEXT_COLOR [UIColor colorWithWhite:84/255. alpha:1]
 #define TOP_BAR_HEIGHT 45.0f
 #define DOT_FONT_SIZE 18.0f
-#define DATE_FONT_SIZE 24.0f
+#define DATE_FONT_SIZE 11.0f
 #define VIEW_WIDTH 320.0f
 
 #define DATE_CELL_WIDTH 46
 #define DATE_CELL_HEIGHT 44
+
+#define CALENDAR_RADIUS 10
 
 #pragma mark - TKCalendarMonthTiles
 @interface TKCalendarMonthTiles : UIView {
@@ -292,9 +294,11 @@ static UIImage *tileImage;
 	//r.size.height -= 2;
 	
 	//CGContextSetPatternPhase(context, CGSizeMake(r.origin.x, r.origin.y - 2));
+    CGFloat yOffset = (r.size.height - [f1 pointSize]) / 2.0;
+    CGRect textRect = CGRectMake(r.origin.x, r.origin.y + yOffset - 6 - 2, r.size.width, [f1 pointSize]);
     
-	
-	[str drawInRect: r
+	[[UIColor lightGrayColor] set];
+	[str drawInRect: textRect
 		   withFont: f1
 	  lineBreakMode: NSLineBreakByWordWrapping
 		  alignment: NSTextAlignmentCenter];
@@ -326,16 +330,9 @@ static UIImage *tileImage;
 		NSInteger index = today +  pre-1;
 		CGRect r = [self rectForCellAtIndex:index];
 		r.origin.y -= 6;
-        CGRect todayR = CGRectMake(r.origin.x + 3, r.origin.y + 2, 40, 40);
-        //[[UIImage imageWithColor:[UIColor colorWithHex:0xaaaaaa]] drawInRect:r];
-        [[UIImage imageWithColor:[UIColor colorWithRed:0x3e/255.0 green:0xba/255.0 blue:0x50/255.0 alpha:1.0] size:CGSizeMake(40, 40) andRoundSize:20] drawInRect:todayR];
+        CGRect todayR = CGRectMake(r.origin.x + (r.size.width - 2*CALENDAR_RADIUS)/2, r.origin.y + (r.size.height - 2*CALENDAR_RADIUS)/2, CALENDAR_RADIUS * 2, CALENDAR_RADIUS * 2);
+        [[UIImage imageWithColor:[UIColor colorWithRed:0x3e/255.0 green:0xba/255.0 blue:0x50/255.0 alpha:1.0] size:CGSizeMake(CALENDAR_RADIUS * 2, CALENDAR_RADIUS * 2) andRoundSize:CALENDAR_RADIUS] drawInRect:todayR];
         
-        
-        //_selectedImageView.layer.magnificationFilter = kCAFilterNearest;
-        //_selectedImageView.frame = CGRectMake(0, 0, 40, 40);
-        //_selectedImageView.layer.cornerRadius = 20;
-        //_selectedImageView.clipsToBounds = YES;
-		//[[UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Today Tile.png")] drawInRect:r];
 	}
 	
 	
@@ -357,22 +354,23 @@ static UIImage *tileImage;
 	UIColor *color = grayGradientColor;
 	
 	if(firstOfPrev>0){
-		[color set];
+		//[[UIColor lightGrayColor] set];
 		for(NSInteger i = firstOfPrev;i<= lastOfPrev;i++){
-			r = [self rectForCellAtIndex:index];
+			//r = [self rectForCellAtIndex:index];
 			
-			BOOL mark = mc > 0 && index < mc ? [self.marks[index] boolValue] : NO;
-			[self drawTileInRect:r day:i mark:mark font:font font2:font2 context:context];
+			//BOOL mark = mc > 0 && index < mc ? [self.marks[index] boolValue] : NO;
+			//[self drawTileInRect:r day:i mark:mark font:font font2:font2 context:context];
             
 			index++;
 		}
+        
 	}
 	
 	
 	color = gradientColor;
 	[color set];
 	
-    
+    NSLog(@"%d,%d",firstOfPrev,lastOfPrev);
 	
 	
 	for(NSInteger i=1; i <= daysInMonth; i++){
@@ -401,9 +399,9 @@ static UIImage *tileImage;
 	[grayGradientColor set];
 	NSInteger i = 1;
 	while(index % 7 != 0){
-		r = [self rectForCellAtIndex:index];
-		BOOL mark = mc > 0 && index < mc ? [self.marks[index] boolValue] : NO;
-		[self drawTileInRect:r day:i mark:mark font:font font2:font2 context:context];
+		//r = [self rectForCellAtIndex:index];
+		//BOOL mark = mc > 0 && index < mc ? [self.marks[index] boolValue] : NO;
+		//[self drawTileInRect:r day:i mark:mark font:font font2:font2 context:context];
 		i++;
 		index++;
 	}
@@ -461,7 +459,8 @@ static UIImage *tileImage;
 		column = 6;
 		row--;
 	}
-    self.selectedImageView.frame = CGRectMakeWithSize((column*DATE_CELL_WIDTH)+3, (row*DATE_CELL_HEIGHT)+2, self.selectedImageView.frame.size);
+    self.selectedImageView.frame = CGRectMakeWithSize((column*DATE_CELL_WIDTH) + (DATE_CELL_WIDTH - CALENDAR_RADIUS *2 )/2, (row*DATE_CELL_HEIGHT)+ (DATE_CELL_HEIGHT - CALENDAR_RADIUS * 2)/2, self.selectedImageView.frame.size);
+    
 	//self.selectedImageView.frame = CGRectMakeWithSize((column*DATE_CELL_WIDTH)-1, (row*DATE_CELL_HEIGHT)-1, self.selectedImageView.frame.size);
 	[self addSubview:self.selectedImageView];
 	
@@ -486,6 +485,7 @@ static UIImage *tileImage;
 }
 
 #pragma mark Touches
+//User interaction
 - (void) reactToTouch:(UITouch*)touch down:(BOOL)down{
 	
 	CGPoint p = [touch locationInView:self];
@@ -528,6 +528,7 @@ static UIImage *tileImage;
 	self.dot.hidden = NO;
 	
 	if(portion != 1){
+        
 		markWasOnToday = YES;
 		self.selectedImageView.image = nil;
 		self.selectedImageView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.15];
@@ -561,7 +562,7 @@ static UIImage *tileImage;
 	
 	
 	//self.selectedImageView.frame = CGRectMakeWithSize((column*DATE_CELL_WIDTH)-1, (row*DATE_CELL_HEIGHT)-1, self.selectedImageView.frame.size);
-    self.selectedImageView.frame = CGRectMakeWithSize((column*DATE_CELL_WIDTH)+3, (row*DATE_CELL_HEIGHT)+2, self.selectedImageView.frame.size);
+    self.selectedImageView.frame = CGRectMakeWithSize((column*DATE_CELL_WIDTH) + (DATE_CELL_WIDTH - CALENDAR_RADIUS *2 )/2, (row*DATE_CELL_HEIGHT)+ (DATE_CELL_HEIGHT - CALENDAR_RADIUS * 2)/2, self.selectedImageView.frame.size);
 	
 	if(day == selectedDay && selectedPortion == portion) return;
 	
@@ -595,7 +596,7 @@ static UIImage *tileImage;
 	if(_currentDay) return _currentDay;
     
 	CGRect r = self.selectedImageView.bounds;
-	r.origin.y -= 1;
+	//r.origin.y += ;
 	_currentDay = [[UILabel alloc] initWithFrame:r];
 	_currentDay.text = @"1";
 	_currentDay.textColor = [UIColor whiteColor];
@@ -630,15 +631,15 @@ static UIImage *tileImage;
 	//UIImage *img = [[UIImage imageWithContentsOfFile:path] stretchableImageWithLeftCapWidth:1 topCapHeight:0];
 	_selectedImageView = [[UIImageView alloc] initWithImage:img];
 	_selectedImageView.layer.magnificationFilter = kCAFilterNearest;
-    _selectedImageView.frame = CGRectMake(0, 0, 40, 40);
-    _selectedImageView.layer.cornerRadius = 20;
+    _selectedImageView.frame = CGRectMake(0, 0, CALENDAR_RADIUS * 2, CALENDAR_RADIUS * 2);
+    _selectedImageView.layer.cornerRadius = CALENDAR_RADIUS;
     _selectedImageView.clipsToBounds = YES;
 	return _selectedImageView;
 }
 
 @end
 
-
+//------------------------------------------------------------------------------------------------
 
 #pragma mark - TKCalendarMonthView
 @interface TKCalendarMonthView ()
@@ -722,6 +723,7 @@ static UIImage *tileImage;
 	NSInteger i = 0;
 	for(NSString *s in ar){
 		UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(DATE_CELL_WIDTH*i + (i==0?0:-1), 30, 45, 15)];
+        label.textColor = [UIColor lightGrayColor];
 		[self addSubview:label];
         
         // Added Accessibility Labels
@@ -745,9 +747,9 @@ static UIImage *tileImage;
 		label.textAlignment = NSTextAlignmentCenter;
 		//label.shadowColor = [UIColor whiteColor];
 		//label.shadowOffset = CGSizeMake(0, 1);
-		label.font = [UIFont boldSystemFontOfSize:10];
+		label.font = [UIFont boldSystemFontOfSize:8];
 		label.backgroundColor = [UIColor clearColor];
-		label.textColor = TEXT_COLOR;
+		//label.textColor = TEXT_COLOR;
 		i++;
 	}
 	
@@ -976,10 +978,10 @@ static UIImage *tileImage;
 	_monthYear = [[UILabel alloc] initWithFrame:CGRectInset(CGRectMake(0, 0, VIEW_WIDTH, 36), 40, 6)];
 	_monthYear.textAlignment = NSTextAlignmentCenter;
 	_monthYear.backgroundColor = [UIColor clearColor];
-	_monthYear.font = [UIFont boldSystemFontOfSize:22];
+	_monthYear.font = [UIFont boldSystemFontOfSize:14];
 	//_monthYear.shadowColor = [UIColor whiteColor];
 	//_monthYear.shadowOffset = CGSizeMake(0,1);
-	_monthYear.textColor =[UIColor blackColor];
+	_monthYear.textColor =[UIColor lightGrayColor];
 	return _monthYear;
 }
 - (UIButton *) leftArrow{
@@ -987,10 +989,11 @@ static UIImage *tileImage;
     
 	_leftArrow = [UIButton buttonWithType:UIButtonTypeCustom];
 	_leftArrow.tag = 0;
-	_leftArrow.frame = CGRectMake(0, 0, 52, 36);
-	_leftArrow.accessibilityLabel = @"Previous Month";
+	_leftArrow.frame = CGRectMake(50, 0, 52, 36);
+    [_leftArrow setTitleColor:[UIColor lightGrayColor] forState:0];
+	//_leftArrow.accessibilityLabel = @"Previous Month";
 	[_leftArrow addTarget:self action:@selector(changeMonth:) forControlEvents:UIControlEventTouchUpInside];
-	[_leftArrow setImage:[UIImage imageNamedTK:@"calendar/calendar_left_arrow"] forState:0];
+	[_leftArrow setTitle:@"<" forState:0];
 	return _leftArrow;
 }
 - (UIButton *) rightArrow{
@@ -998,10 +1001,11 @@ static UIImage *tileImage;
     
 	_rightArrow = [UIButton buttonWithType:UIButtonTypeCustom];
 	_rightArrow.tag = 1;
-	_rightArrow.frame = CGRectMake(VIEW_WIDTH-52, 0, 52, 36);
-	_rightArrow.accessibilityLabel = @"Next Month";
+	_rightArrow.frame = CGRectMake(VIEW_WIDTH-52 - 50, 0, 52, 36);
+    [_rightArrow setTitleColor:[UIColor lightGrayColor] forState:0];
+	//_rightArrow.accessibilityLabel = @"Next Month";
 	[_rightArrow addTarget:self action:@selector(changeMonth:) forControlEvents:UIControlEventTouchUpInside];
-	[_rightArrow setImage:[UIImage imageNamedTK:@"calendar/calendar_right_arrow"] forState:0];
+	[_rightArrow setTitle:@">" forState:0];
 	return _rightArrow;
 }
 - (UIView *) tileBox{
