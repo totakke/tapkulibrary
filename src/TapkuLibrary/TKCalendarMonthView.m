@@ -87,7 +87,7 @@ static UIImage *tileImage;
 + (void) initialize{
     if (self == [TKCalendarMonthTiles class]){
         //tileImage = [UIImage imageWithContentsOfFile:TKBUNDLE(@"calendar/Month Calendar Date Tile.png")];
-        tileImage = [UIImage imageWithColor:[UIColor colorWithHex:0xfafafa]];
+        tileImage = [UIImage imageWithColor:[UIColor colorWithHex:0xf6f6f6]];
     }
 }
 
@@ -295,9 +295,10 @@ static UIImage *tileImage;
 	
 	//CGContextSetPatternPhase(context, CGSizeMake(r.origin.x, r.origin.y - 2));
     CGFloat yOffset = (r.size.height - [f1 pointSize]) / 2.0;
-    CGRect textRect = CGRectMake(r.origin.x, r.origin.y + yOffset - 6 - 2, r.size.width, [f1 pointSize]);
+    CGRect textRect = CGRectMake(r.origin.x, r.origin.y + yOffset - 6 - 1.5, r.size.width, [f1 pointSize]);
     
-	[[UIColor lightGrayColor] set];
+    
+	
 	[str drawInRect: textRect
 		   withFont: f1
 	  lineBreakMode: NSLineBreakByWordWrapping
@@ -371,15 +372,20 @@ static UIImage *tileImage;
 	[color set];
 	
     NSLog(@"%d,%d",firstOfPrev,lastOfPrev);
-	
+    
+    
+    
+    
 	
 	for(NSInteger i=1; i <= daysInMonth; i++){
 		
 		r = [self rectForCellAtIndex:index];
+        [[UIColor lightGrayColor] set];
 		if(today == i){
 			//CGContextSetShadowWithColor(context, CGSizeMake(0,-1), 0, darkColor);
 			//[[UIColor whiteColor] set];
 			//r.origin.y += 1;
+            [[UIColor whiteColor] set];
 		}
 		
 		BOOL mark = mc > 0 && index < mc ? [self.marks[index] boolValue] : NO;
@@ -405,6 +411,16 @@ static UIImage *tileImage;
 		i++;
 		index++;
 	}
+    //draw Lines
+    CGContextSetRGBFillColor(context, 0.8, 0.8, 0.8, 1.0);
+    CGContextSetLineWidth(context, 0.5);
+    
+    for(NSInteger i = 0; i < index / 7 + 1; i++){
+        CGContextMoveToPoint(context, 0, DATE_CELL_HEIGHT *  i);
+        CGContextAddLineToPoint(context, VIEW_WIDTH, DATE_CELL_HEIGHT * i);
+        CGContextStrokePath(context);
+    }
+    
 	
 	
 }
@@ -672,10 +688,10 @@ static UIImage *tileImage;
 }
 - (id) initWithSundayAsFirst:(BOOL)s timeZone:(NSTimeZone*)timeZone{
 	if (!(self = [super initWithFrame:CGRectMake(0, 0, VIEW_WIDTH, VIEW_WIDTH)])) return nil;
-	self.backgroundColor = [UIColor colorWithHex:0xfcfcfc];
+	//self.backgroundColor = [UIColor colorWithHex:0xfcfcfa;
 	self.timeZone = timeZone;
 	self.sunday = s;
-	
+	self.backgroundColor = [UIColor colorWithHex:0xf6f6f6];
 	//[self addSubview:self.dropshadow]; //下の影
 	[self addSubview:self.topBackground];
 	[self addSubview:self.leftArrow];
@@ -967,7 +983,7 @@ static UIImage *tileImage;
 	//line.backgroundColor = [UIColor colorWithHex:0xaaaeb6];
 	//line.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	//[gradient addSubview:line];
-	_topBackground.backgroundColor = [UIColor whiteColor];
+	_topBackground.backgroundColor = [UIColor colorWithHex:0xf6f6f6];
 	//gradient.userInteractionEnabled = YES;
 	//_topBackground = gradient;
 	return _topBackground;
