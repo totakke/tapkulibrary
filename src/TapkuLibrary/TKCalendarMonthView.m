@@ -48,7 +48,7 @@ static UIImage *tileImage;
 #define TEXT_COLOR [UIColor colorWithWhite:84/255. alpha:1]
 #define TOP_BAR_HEIGHT 45.0f
 #define DOT_FONT_SIZE 18.0f
-#define DATE_FONT_SIZE 11.0f
+#define DATE_FONT_SIZE 13.0f
 #define VIEW_WIDTH 320.0f
 
 #define DATE_CELL_WIDTH 46
@@ -305,6 +305,7 @@ static UIImage *tileImage;
 		  alignment: NSTextAlignmentCenter];
 	
 	if(mark){
+        [[UIColor lightGrayColor] set];
 		r.size.height = 10;
 		r.origin.y += 19;
 		
