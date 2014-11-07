@@ -83,6 +83,8 @@
 	self.monthView.dataSource = self;
 	self.monthView.delegate = self;
 	[self.view addSubview:self.monthView];
+	self.monthView.frame = CGRectMake((self.view.frame.size.width - self.monthView.frame.size.width)/2, 0, self.monthView.frame.size.width, self.monthView.frame.size.height);
+	self.view.backgroundColor = [UIColor colorWithWhite:0xf6/255.0 alpha:1.0];
 }
 
 - (NSArray*) calendarMonthView:(TKCalendarMonthView*)monthView marksFromDate:(NSDate*)startDate toDate:(NSDate*)lastDate{
