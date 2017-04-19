@@ -15,4 +15,5 @@ Pod::Spec.new do |s|
   s.source_files  = 'src/TapkuLibrary/*.{h,m}'
   s.resources     = 'src/TapkuLibrary.bundle'
   s.frameworks    = 'QuartzCore'
+  s.ios.deployment_target = '8.0'
 end
